@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>월·부서 KPI</title>
+  <link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+  <header class="top">
+    <h1>월·부서 KPI</h1>
+    <span id="modeBadge" class="badge" hidden></span>
+  </header>
+
+  <main>
+    <p id="sampleNotice" class="notice" hidden>
+      샘플 모드 — 가상 데이터입니다. 추가한 항목은 이 화면에만 임시로 남고 새로고침하면 사라집니다. 실제 DB에는 저장되지 않습니다.
+    </p>
+
+    <section class="panel" aria-labelledby="filterTitle">
+      <h2 id="filterTitle" class="sr-only">필터</h2>
+      <div class="filters">
+        <label>월
+          <select id="filterMonth"></select>
+        </label>
+        <label>부서
+          <select id="filterDept"></select>
+        </label>
+        <button type="button" id="resetFilter" class="ghost">필터 초기화</button>
+      </div>
+    </section>
+
+    <!-- 상태별 영역: loading / error / empty / data 중 하나만 보임 -->
+    <section id="stateLoading" class="state" hidden>불러오는 중…</section>
+
+    <section id="stateError" class="state error" role="alert" hidden>
+      <strong>데이터를 불러오지 못했습니다.</strong>
+      <p id="errorMessage"></p>
+      <button type="button" id="retry">다시 시도</button>
+    </section>
+
+    <section id="stateEmpty" class="state empty" hidden>
+      <strong id="emptyTitle"></strong>
+      <p id="emptyHint"></p>
+    </section>
+
+    <section id="stateData" hidden>
+      <div class="cards">
+        <div class="card"><span class="label">목표 합계</span><span id="sumTarget" class="value"></span></div>
+        <div class="card"><span class="label">실적 합계</span><span id="sumActual" class="value"></span></div>
+        <div class="card"><span class="label">달성률</span><span id="rate" class="value"></span>
+          <span class="formula">실적 합계 ÷ 목표 합계 × 100</span></div>
+      </div>
+
+      <h2 class="section-title">근거표 <small id="rowCount"></small></h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>월</th><th>부서</th><th class="num">목표</th><th class="num">실적</th><th class="num">달성률</th></tr></thead>
+          <tbody id="evidenceBody"></tbody>
+          <tfoot><tr><th colspan="2">합계</th><th class="num" id="footTarget"></th><th class="num" id="footActual"></th><th class="num" id="footRate"></th></tr></tfoot>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="formTitle">
+      <h2 id="formTitle" class="section-title">실적 입력</h2>
+      <form id="entryForm" novalidate>
+        <div class="form-grid">
+          <label>월 <input type="month" name="month" required></label>
+          <label>부서 <input type="text" name="department" list="deptList" autocomplete="off" required></label>
+          <label>목표 <input type="text" name="target" inputmode="decimal" placeholder="예: 1000" required></label>
+          <label>실적 <input type="text" name="actual" inputmode="decimal" placeholder="예: 950" required></label>
+        </div>
+        <datalist id="deptList"></datalist>
+        <ul id="formErrors" class="form-errors" role="alert" hidden></ul>
+        <p id="formOk" class="form-ok" role="status" hidden></p>
+        <button type="submit" id="saveBtn">추가</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- 순서 중요: 계산 → 저장소 → 설정 → 화면 -->
+  <script src="src/kpi-core.js"></script>
+  <script src="src/data/sample-repository.js"></script>
+  <script src="src/data/supabase-repository.js"></script>
+  <script src="src/config.js"></script>
+  <script src="src/app.js"></script>
+</body>
+</html>
